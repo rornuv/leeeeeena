@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ленаприв</title>
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #fff1f3;
+  --text: #4a1020;
+  --btn-bg: #e11d48;
+  --btn-text: #ffffff;
+  --glow: rgba(225, 29, 72, 0.35);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1c0a10;
+    --text: #ffe4ea;
+    --btn-bg: #fb4b73;
+    --btn-text: #2a0510;
+    --glow: rgba(251, 75, 115, 0.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1c0a10;
+  --text: #ffe4ea;
+  --btn-bg: #fb4b73;
+  --btn-text: #2a0510;
+  --glow: rgba(251, 75, 115, 0.45);
+  color-scheme: dark;
+}
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-align: center;
+}
+.stage { position: relative; z-index: 2; padding: 24px; max-width: 100%; }
+h1 {
+  font-size: clamp(2rem, 8vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0 0 32px;
+}
+button {
+  font: inherit;
+  font-size: 1.6rem;
+  font-weight: 800;
+  padding: 16px 56px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  cursor: pointer;
+  box-shadow: 0 10px 30px var(--glow);
+  transition: transform .15s ease;
+}
+button:hover { transform: scale(1.05); }
+button:active { transform: scale(0.96); }
+button:focus-visible { outline: 3px solid var(--text); outline-offset: 4px; }
+.love { display: none; font-size: clamp(3rem, 15vw, 7rem); font-weight: 800; line-height: 1.1; }
+.done .ask { display: none; }
+.done .love { display: block; animation: pop .6s cubic-bezier(.2, 1.6, .4, 1); }
+@keyframes pop { from { transform: scale(0.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.heart {
+  position: fixed;
+  bottom: -60px;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  animation: rise linear forwards;
+}
+@keyframes rise {
+  to { transform: translateY(calc(-100vh - 140px)) rotate(var(--rot)); opacity: 0.9; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .done .love { animation: none; }
+}
+</style>
+</head>
+<body>
+<main class="stage" id="stage">
+  <div class="ask">
+    <h1>Хочешь что-нибудь прикольного?</h1>
+    <button id="yes" type="button">Да</button>
+  </div>
+  <div class="love" role="status">просто улыбнись 😊</div>
+</main>
+<script>
+(function () {
+  var stage = document.getElementById("stage");
+  var yes = document.getElementById("yes");
+  var icons = ["🦄", "🌈", "🦄", "🌈", "✨", "🦄", "🌈"];
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function spawn() {
+    var h = document.createElement("span");
+    h.className = "heart";
+    h.textContent = icons[Math.floor(Math.random() * icons.length)];
+    var dur = 3 + Math.random() * 4;
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = 18 + Math.random() * 46 + "px";
+    h.style.animationDuration = dur + "s";
+    h.style.setProperty("--rot", (Math.random() * 80 - 40) + "deg");
+    document.body.appendChild(h);
+    setTimeout(function () { h.remove(); }, dur * 1000 + 100);
+  }
+
+  yes.addEventListener("click", function () {
+    stage.classList.add("done");
+    var burst = reduce ? 12 : 70;
+    for (var i = 0; i < burst; i++) {
+      setTimeout(spawn, Math.random() * 1500);
+    }
+    if (!reduce) setInterval(spawn, 120);
+  });
+})();
+</script>
+</body>
+</html>
